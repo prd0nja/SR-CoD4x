@@ -3691,8 +3691,7 @@ qboolean SV_Map(const char *levelname)
 
 		if (!DB_FileExists(mapname_loadff, 0) && !DB_FileExists(mapname_loadff, 2))
 		{
-			Com_PrintError(CON_CHANNEL_SERVER, "Can't find file %s.ff\n", mapname_loadff);
-			return qfalse;
+			Com_PrintWarning(CON_CHANNEL_SERVER, "Can't find file %s.ff\n", mapname_loadff);
 		}
 	}
 	else
