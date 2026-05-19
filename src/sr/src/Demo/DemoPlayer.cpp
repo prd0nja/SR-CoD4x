@@ -33,8 +33,7 @@ namespace SR
 		}
 		entityState_t entity = *to;
 		gentity_t *gEntity = &g_entities[to->number];
-		bool shouldUpdate = gEntity
-			&& (gEntity->classname == scr_const.script_brushmodel || gEntity->classname == scr_const.script_model);
+		bool shouldUpdate = gEntity && gEntity->classname == scr_const.script_brushmodel;
 
 		auto it = CurrentFrame.entities.find(to->number);
 		if (it != CurrentFrame.entities.end() && shouldUpdate)
