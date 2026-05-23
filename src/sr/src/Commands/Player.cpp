@@ -135,9 +135,7 @@ namespace SR
 		VectorCopy(player->SaveState->origin, player->ps->origin);
 		VectorCopy(player->SaveState->velocity, player->ps->velocity);
 		Vector2Copy(player->SaveState->oldVelocity, player->ps->oldVelocity);
-		player->ps->gravity = player->SaveState->gravity;
 		player->ps->leanf = player->SaveState->leanf;
-		player->ps->speed = player->SaveState->speed;
 		player->ps->groundEntityNum = player->SaveState->groundEntityNum;
 		Vector2Copy(player->SaveState->vLadderVec, player->ps->vLadderVec);
 		player->ps->jumpTime = player->SaveState->jumpTime;
