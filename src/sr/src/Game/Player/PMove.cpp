@@ -41,12 +41,22 @@ namespace SR
 		Player->SurfaceFlags = pml->groundTrace.sflags;
 	}
 
+	int PMove::WalkMove(pmove_t *pm, pml_t *pml)
+	{
+		return 0;
+	}
+
 	int PMove::AirMove(pmove_t *pm, pml_t *pml)
 	{
-		return 1;
+		return 0;
 	}
 
 	int PMove::GroundTrace(pmove_t *pm, pml_t *pml)
+	{
+		return 0;
+	}
+
+	int PMove::CrashLand(playerState_s *ps, pml_t *pml)
 	{
 		return 0;
 	}

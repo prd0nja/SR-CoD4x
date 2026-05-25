@@ -20,7 +20,9 @@ namespace SR
 
 		void JumpUpdateSurface(pml_t *pml);
 
+		int WalkMove(pmove_t *pm, pml_t *pml);
 		int AirMove(pmove_t *pm, pml_t *pml);
 		int GroundTrace(pmove_t *pm, pml_t *pml);
+		int CrashLand(playerState_s *ps, pml_t *pml);
 	};
 }

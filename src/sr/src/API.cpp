@@ -156,6 +156,26 @@ void SR_JumpUpdateSurface(playerState_s *ps, pml_t *pml)
 	Player::Get(ps->clientNum)->PMove->JumpUpdateSurface(pml);
 }
 
+int SR_PmoveWalkMove(pmove_t *pm, pml_t *pml)
+{
+	return Player::Get(pm->ps->clientNum)->PMove->WalkMove(pm, pml);
+}
+
+int SR_PmoveAirMove(pmove_t *pm, pml_t *pml)
+{
+	return Player::Get(pm->ps->clientNum)->PMove->AirMove(pm, pml);
+}
+
+int SR_PmoveGroundTrace(pmove_t *pm, pml_t *pml)
+{
+	return Player::Get(pm->ps->clientNum)->PMove->GroundTrace(pm, pml);
+}
+
+int SR_PmoveCrashLand(playerState_s *ps, pml_t *pml)
+{
+	return Player::Get(ps->clientNum)->PMove->CrashLand(ps, pml);
+}
+
 void SR_NetchanDebugSize(int size)
 {
 	Debug::NetchanPacketSize(size);
