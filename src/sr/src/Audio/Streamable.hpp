@@ -1,10 +1,6 @@
 #pragma once
 #include "Base.hpp"
 
-#include <cstring>
-#include <filesystem>
-#include <fstream>
-
 namespace SR
 {
 	class Streamable

@@ -1,8 +1,6 @@
 #pragma once
 #include "Base.hpp"
 
-#include <chrono>
-
 namespace SR
 {
 	class Debug

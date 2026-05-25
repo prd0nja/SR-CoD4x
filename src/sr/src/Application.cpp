@@ -2,10 +2,10 @@
 
 #include "Audio/Speex.hpp"
 #include "Commands/Container.hpp"
-#include "Demo/DemoContainer.hpp"
-#include "Network/Netchan.hpp"
+#include "Game/Demo/DemoContainer.hpp"
 #include "System/Debug.hpp"
 #include "System/Environment.hpp"
+#include "System/Netchan.hpp"
 
 namespace SR
 {

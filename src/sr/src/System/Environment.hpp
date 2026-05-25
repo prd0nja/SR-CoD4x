@@ -1,8 +1,6 @@
 #pragma once
 #include "Base.hpp"
 
-#include <filesystem>
-
 namespace SR
 {
 	class Environment

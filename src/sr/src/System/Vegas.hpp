@@ -1,5 +1,5 @@
 #pragma once
-#include "Player/Player.hpp"
+#include "Game/Player/Player.hpp"
 
 namespace SR
 {

@@ -1,7 +1,7 @@
 #include "Netchan.hpp"
 #include "Vegas.hpp"
 
-#include "Player/Player.hpp"
+#include "Game/Player/Player.hpp"
 
 namespace SR
 {

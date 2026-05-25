@@ -4,4 +4,8 @@ target_sources(SR PRIVATE
 	Debug.hpp
 	Debug.cpp
 	Environment.hpp
-	Environment.cpp)
+	Environment.cpp
+	Netchan.cpp
+	Netchan.hpp
+	Vegas.cpp
+	Vegas.hpp)

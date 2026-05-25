@@ -8,14 +8,19 @@ namespace SR
 	public:
 		Ref<class Player> Player;
 
-		PMove(const Ref<class Player>& player);
+		PMove(const Ref<class Player> &player);
 		virtual ~PMove() = default;
 
 		void Initialize();
+
 		int GetSpeed();
 		float GetSpeedScale();
 		int GetGravity();
 		float GetJumpHeight();
-		void JumpUpdateSurface(pml_t* pml);
+
+		void JumpUpdateSurface(pml_t *pml);
+
+		int AirMove(pmove_t *pm, pml_t *pml);
+		int GroundTrace(pmove_t *pm, pml_t *pml);
 	};
 }

@@ -1,6 +1,7 @@
 #pragma once
-#include "Demo/DemoPlayer.hpp"
 #include "PMove.hpp"
+
+#include "Game/Demo/DemoPlayer.hpp"
 
 #define PLAYER_FPS_STACK 20
 #define PMF_PRONING 0x1

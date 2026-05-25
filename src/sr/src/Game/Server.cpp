@@ -2,12 +2,11 @@
 #include "Map.hpp"
 
 #include "Audio/Voice.hpp"
-#include "Network/Vegas.hpp"
+#include "Game/Demo/DemoContainer.hpp"
+#include "Game/Entity/Entity.hpp"
+#include "Game/Player/Player.hpp"
 #include "System/Debug.hpp"
-
-#include "Demo/DemoContainer.hpp"
-#include "Entity/Entity.hpp"
-#include "Player/Player.hpp"
+#include "System/Vegas.hpp"
 
 namespace SR
 {

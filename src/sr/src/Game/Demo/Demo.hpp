@@ -6,8 +6,6 @@
 #include <CoD4DM1/API/DemoReader.hpp>
 // clang-format on
 
-#include <filesystem>
-
 #define DEMO_MAX_CONFIGSTRINGS 2 * 2442
 
 namespace SR

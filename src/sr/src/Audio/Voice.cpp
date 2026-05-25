@@ -1,7 +1,8 @@
 #include "Voice.hpp"
 
 #include "Audio.hpp"
-#include "Player/Player.hpp"
+
+#include "Game/Player/Player.hpp"
 
 #define VOICE_AMPLIFY 2
 #define PROXIMITY_DISTANCE 1500

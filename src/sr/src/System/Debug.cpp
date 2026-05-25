@@ -1,9 +1,5 @@
 #include "Debug.hpp"
 
-#include "Utils/Log.hpp"
-
-#include <chrono>
-
 namespace SR
 {
 	void Debug::Initialize()

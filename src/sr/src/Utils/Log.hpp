@@ -1,7 +1,7 @@
 #pragma once
-#include <format>
-#include <iostream>
-#include <string>
+#include "Base.hpp"
+
+#undef ERROR
 
 namespace SR
 {

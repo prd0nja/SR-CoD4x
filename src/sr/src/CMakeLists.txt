@@ -2,11 +2,7 @@ add_library(SR STATIC)
 
 add_subdirectory(Audio)
 add_subdirectory(Commands)
-add_subdirectory(Demo)
-add_subdirectory(Entity)
-add_subdirectory(Network)
-add_subdirectory(Player)
-add_subdirectory(Server)
+add_subdirectory(Game)
 add_subdirectory(System)
 add_subdirectory(Utils)
 
@@ -17,9 +13,10 @@ target_sources(SR PRIVATE
 	Application.cpp
 	Application.hpp
 	Base.hpp
+	Common.hpp
 	Macros.hpp)
 
-target_precompile_headers(SR PUBLIC Base.hpp)
+target_precompile_headers(SR PUBLIC Base.hpp Common.hpp)
 target_compile_definitions(SR PUBLIC COD4X18UPDATE)
 
 target_link_libraries(SR PUBLIC

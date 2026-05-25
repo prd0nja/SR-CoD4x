@@ -1,8 +1,6 @@
 #pragma once
 #include "Demo.hpp"
 
-#include <mutex>
-
 namespace SR
 {
 	class DemoContainer

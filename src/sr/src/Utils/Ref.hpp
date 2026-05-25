@@ -1,5 +1,5 @@
 #pragma once
-#include <memory>
+#include "Base.hpp"
 
 namespace SR
 {

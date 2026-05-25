@@ -4,8 +4,6 @@
 #include "Audio/Voice.hpp"
 #include "Audio/WAV.hpp"
 
-#include <filesystem>
-
 namespace SR
 {
 	void GameCommands::Register()

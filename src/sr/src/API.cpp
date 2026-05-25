@@ -2,14 +2,13 @@
 #include "Application.hpp"
 
 #include "Audio/Voice.hpp"
-#include "Network/Netchan.hpp"
-#include "Server/Map.hpp"
-#include "Server/Server.hpp"
+#include "Game/Demo/DemoRecord.hpp"
+#include "Game/Entity/Entity.hpp"
+#include "Game/Map.hpp"
+#include "Game/Player/Player.hpp"
+#include "Game/Server.hpp"
 #include "System/Debug.hpp"
-
-#include "Demo/DemoRecord.hpp"
-#include "Entity/Entity.hpp"
-#include "Player/Player.hpp"
+#include "System/Netchan.hpp"
 
 IZ_C_START
 

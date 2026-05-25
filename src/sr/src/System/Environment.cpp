@@ -1,7 +1,5 @@
 #include "Environment.hpp"
 
-#include <algorithm>
-
 namespace SR
 {
 	void Environment::Build()

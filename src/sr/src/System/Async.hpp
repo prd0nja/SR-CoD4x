@@ -1,13 +1,5 @@
 #pragma once
-#include <atomic>
-#include <condition_variable>
-#include <functional>
-#include <future>
-#include <memory>
-#include <mutex>
-#include <queue>
-#include <thread>
-#include <vector>
+#include "Base.hpp"
 
 namespace SR
 {

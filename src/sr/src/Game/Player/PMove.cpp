@@ -4,7 +4,7 @@
 
 namespace SR
 {
-	PMove::PMove(const Ref<class Player>& player)
+	PMove::PMove(const Ref<class Player> &player)
 	{
 		Player = player;
 	}
@@ -36,8 +36,18 @@ namespace SR
 		return Player->cl->jumpHeight;
 	}
 
-	void PMove::JumpUpdateSurface(pml_t* pml)
+	void PMove::JumpUpdateSurface(pml_t *pml)
 	{
 		Player->SurfaceFlags = pml->groundTrace.sflags;
+	}
+
+	int PMove::AirMove(pmove_t *pm, pml_t *pml)
+	{
+		return 1;
+	}
+
+	int PMove::GroundTrace(pmove_t *pm, pml_t *pml)
+	{
+		return 0;
 	}
 }

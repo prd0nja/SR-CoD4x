@@ -2,7 +2,6 @@
 #include "Base.hpp"
 
 #include <speex/speex.h>
-#include <cstring>
 
 #define SPEEX_RATE 8000
 #define SPEEX_FRAME_SIZE 160
