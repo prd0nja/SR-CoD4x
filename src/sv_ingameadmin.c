@@ -176,7 +176,9 @@ qboolean SV_ExecuteRemoteCmd(int clientnum, const char *msg)
 
 	Cmd_SetCurrentInvokerInfo(power, clientnum, cl->steamid, invname);
 
+	Cmd_SetTokenizeAllowURL(qtrue);
 	Cmd_ExecuteSingleCommand(0, 0, buffer);
+	Cmd_SetTokenizeAllowURL(qfalse);
 
 	Cmd_SetCurrentInvokerInfo(j, -1, oldsteamid, oldname);
 

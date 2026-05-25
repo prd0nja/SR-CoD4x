@@ -513,6 +513,17 @@ typedef struct
 static cmdTokenizer_t tokenStrings;
 static cmdTokenizer_t sv_tokenStrings;
 
+/* 
+tokenizer will not treat '//' as a comment break inside a token
+used by SV_ExecuteRemoteCmd so chat commands can pass URLs
+*/
+static qboolean g_tokenizeAllowURL = qfalse;
+
+void Cmd_SetTokenizeAllowURL(qboolean allow)
+{
+	g_tokenizeAllowURL = allow;
+}
+
 /*
 Cmd_Argc	Returns count of commandline arguments
 */
@@ -800,7 +811,8 @@ static void Cmd_TokenizeStringInternal(const char *text_in, qboolean ignoreQuote
 				break;
 			}
 
-			if (text[0] == '/' && text[1] == '/')
+			// do not break on '//' if there is URL
+			if (!g_tokenizeAllowURL && text[0] == '/' && text[1] == '/')
 			{
 				break;
 			}

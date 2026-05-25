@@ -22,6 +22,7 @@ extern "C"
 	void Cmd_Init(void);
 	void Cmd_TokenizeString(const char *string);
 	void Cmd_EndTokenizedString();
+	void Cmd_SetTokenizeAllowURL(qboolean allow);
 	void Cmd_ExecuteSingleCommand(int unk, int unk2, const char *cmd);
 	void Cmd_ExecuteString(const char *cmd);
 	void Cbuf_Init(void);
