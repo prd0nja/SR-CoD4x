@@ -285,7 +285,7 @@ extern "C"
 			return qfalse;
 		}
 		/*
-		  else if ( pml->groundTrace.sflags & 2 )
+		  else if ( pml->groundTrace.surfaceFlags & 2 )
 		  {
 			result = 0;
 		  }

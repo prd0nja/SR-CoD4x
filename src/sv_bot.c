@@ -268,7 +268,7 @@ void BotImport_Trace(bsp_trace_t *bsptrace, vec3_t start, vec3_t mins, vec3_t ma
 		&bsptrace->plane); // And again stupid gussing how to solve: bsptrace->plane.signbits = trace.plane.signbits;
 	bsptrace->plane.type =
 		PlaneTypeForNormal(bsptrace->plane.normal); // Another guess bsptrace->plane.type = trace.plane.type;
-	bsptrace->surface.value = trace.sflags;
+	bsptrace->surface.value = trace.surfaceFlags;
 	bsptrace->ent = trace.hitId;
 	bsptrace->exp_dist = 0;
 	bsptrace->sidenum = 0;
@@ -299,7 +299,7 @@ void BotImport_EntityTrace(bsp_trace_t *bsptrace, vec3_t start, vec3_t mins, vec
 	bsptrace->plane.type =
 		PlaneTypeForNormal(bsptrace->plane.normal); // Another guess bsptrace->plane.type = trace.plane.type;
 
-	bsptrace->surface.value = trace.sflags;
+	bsptrace->surface.value = trace.surfaceFlags;
 	bsptrace->ent = trace.hitId;
 	bsptrace->exp_dist = 0;
 	bsptrace->sidenum = 0;
