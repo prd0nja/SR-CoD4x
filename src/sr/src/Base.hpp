@@ -37,6 +37,7 @@ IZ_C
 	#include <sv_snapshot.h>
 	#include <sys_main.h>
 	#include <xassets.h>
+	#include <bg_public.h>
 	// clang-format on
 }
 // clang-format off

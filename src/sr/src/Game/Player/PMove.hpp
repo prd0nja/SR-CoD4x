@@ -3,6 +3,14 @@
 
 namespace SR
 {
+	enum class MovementMode
+	{
+		COD4,
+		Q3,
+		Q3CPM,
+		CS,
+	};
+
 	class PMove
 	{
 	public:
@@ -17,12 +25,12 @@ namespace SR
 		float GetSpeedScale();
 		int GetGravity();
 		float GetJumpHeight();
+		MovementMode GetMovementMode();
 
 		void JumpUpdateSurface(pml_t *pml);
-
-		int WalkMove(pmove_t *pm, pml_t *pml);
-		int AirMove(pmove_t *pm, pml_t *pml);
-		int GroundTrace(pmove_t *pm, pml_t *pml);
-		int CrashLand(playerState_s *ps, pml_t *pml);
+		bool WalkMove(pmove_t *pm, pml_t *pml);
+		bool AirMove(pmove_t *pm, pml_t *pml);
+		bool GroundTrace(pmove_t *pm, pml_t *pml);
+		bool CrashLand(playerState_s *ps, pml_t *pml);
 	};
 }

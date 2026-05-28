@@ -86,6 +86,10 @@
 	extern CG_TraceCapsule
 	extern G_TraceCapsule
 	extern G_PlayerEvent
+	extern SR_PmoveWalkMove
+	extern SR_PmoveAirMove
+	extern SR_PmoveGroundTrace
+	extern SR_PmoveCrashLand
 
 ;Exports of bg_pmove:
 	global viewLerp_CrouchStand
@@ -415,9 +419,18 @@ PM_GroundTrace:
 	push esi
 	push ebx
 	sub esp, 0xdc
-	mov [ebp-0xa8], eax
-	mov [ebp-0xac], edx
-	mov eax, [eax]
+	; -------------------------- SR_PmoveGroundTrace --------------------------
+	mov [ebp-0xa8], eax			; stash pm
+	mov [ebp-0xac], edx			; stash pml
+	push edx					; pml
+	push eax					; pm
+	call SR_PmoveGroundTrace
+	add esp, 8					; cdecl cleanup
+	test eax, eax
+	jnz PM_GroundTrace_skip		; nonzero -> skip original body, just return
+	mov eax, [ebp-0xa8]			; restore pm (body's "mov eax,[eax]" needs eax = pm)
+	mov eax, [eax]				; original line
+	; -------------------------- SR_PmoveGroundTrace --------------------------
 	mov [ebp-0x9c], eax
 	mov edx, eax
 	mov eax, [eax+0x1c]
@@ -681,7 +694,18 @@ PM_GroundTrace_190:
 	mov dword [esi+0x2c], 0x1
 	mov eax, [ebp-0x9c]
 	cmp dword [eax+0x70], 0x3ff
-	jz PM_GroundTrace_140
+	; -------------------------- SR_PmoveCrashLand --------------------------
+	jnz PM_GroundTrace_220		; not ENTITYNUM_NONE -> no crashland
+	mov edx, [ebp-0xac]			; pml
+	push edx					; pml
+	push eax					; ps
+	call SR_PmoveCrashLand
+	add esp, 8					; cdecl cleanup
+	test eax, eax
+	jnz PM_GroundTrace_220		; nonzero -> handler handled it, skip inlined body
+	mov eax, [ebp-0x9c]			; restore ps (inlined body reads [eax+0x58], [eax+0x24])
+	jmp PM_GroundTrace_140		; zero -> run original inlined CrashLand
+	; -------------------------- SR_PmoveCrashLand --------------------------
 PM_GroundTrace_220:
 	lea esi, [ebp-0x68]
 	mov [esp], esi
@@ -823,6 +847,7 @@ PM_GroundTrace_170:
 	mov dword [edx+0x30], 0x0
 	mov dword [edx+0x34], 0x0
 	mov dword [edx+0x2c], 0x0
+PM_GroundTrace_skip:
 	add esp, 0xdc
 	pop ebx
 	pop esi
@@ -3591,9 +3616,21 @@ PM_AirMove:
 	push esi
 	push ebx
 	sub esp, 0x4c
-	mov [ebp-0x40], eax
-	mov esi, edx
-	mov edi, [eax]
+	; -------------------------- SR_PmoveAirMove --------------------------
+	mov [ebp-0x40], eax			; stash pm
+	mov esi, edx				; esi = pml
+	mov [ebp-0x44], esi			; spill pml to a free slot
+	push edx					; pml
+	push eax					; pm
+	call SR_PmoveAirMove
+	add esp, 8					; cdecl cleanup
+	test eax, eax
+	jnz PM_AirMove_skip			; nonzero -> skip original body, just return
+	mov eax, [ebp-0x40]			; restore pm
+	mov esi, [ebp-0x44]			; restore pml
+	mov edx, esi            	; restore edx = pml
+	mov edi, [eax]				; original line
+	; -------------------------- SR_PmoveAirMove --------------------------
 	mov eax, edi
 	call PM_Friction
 	mov eax, [ebp-0x40]
@@ -3788,6 +3825,7 @@ PM_AirMove_90:
 	mov edx, esi
 	mov eax, [ebp-0x40]
 	call PM_SetMovementDir
+PM_AirMove_skip:
 	add esp, 0x4c
 	pop ebx
 	pop esi
@@ -6975,7 +7013,16 @@ Pmove_1150:
 	mov ebx, [ebp-0xdc]
 	test ebx, ebx
 	jz Pmove_1170
-	mov ebx, [edi]
+	; -------------------------- SR_PmoveWalkMove --------------------------
+	lea edx, [ebp-0x108]		; pml
+	push edx
+	push edi					; pm
+	call SR_PmoveWalkMove
+	add esp, 8					; cdecl cleanup
+	test eax, eax
+	jnz Pmove_1860				; nonzero -> handler did WalkMove, skip to rejoin
+	mov ebx, [edi]				; original line, edi preserved by handler
+	; -------------------------- SR_PmoveWalkMove --------------------------
 	mov edx, [ebx+0xc]
 	test dh, 0x40
 	jnz Pmove_1180
@@ -8560,8 +8607,8 @@ Pmove_2620:
 	movss xmm2, dword [_float__1_00000000]
 	jmp Pmove_2610
 	add [eax], al
-	
-	
+
+
 Pmove_jumptab_0:
 	dd Pmove_200
 	dd Pmove_2630
