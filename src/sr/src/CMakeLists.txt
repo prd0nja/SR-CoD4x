@@ -21,6 +21,7 @@ target_compile_definitions(SR PUBLIC COD4X18UPDATE)
 
 target_link_libraries(SR PUBLIC
 	CoD4DM1::CoD4DM1
+	glm::glm
 	libsamplerate::libsamplerate
 	minimp3::minimp3
 	speex::speex)

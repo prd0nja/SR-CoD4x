@@ -3,9 +3,16 @@
 	"version": "21.1.0",
 	"description": "SR server module.",
 	"homepage": "https://github.com/Iswenzz/SR-CoD4x",
-	"dependencies": ["cod4dm1", "libsamplerate", "minimp3", "speex"],
+	"dependencies": [
+		"cod4dm1",
+		"glm",
+		"libsamplerate",
+		"minimp3",
+		"speex"
+	],
 	"overrides": [
 		{ "name": "cod4dm1", "version": "1.0.7" },
+		{ "name": "glm", "version": "1.0.1#2" },
 		{ "name": "libsamplerate", "version": "0.2.2#1" },
 		{ "name": "minimp3", "version": "2021-11-30" },
 		{ "name": "speex", "version": "1.2.1" }

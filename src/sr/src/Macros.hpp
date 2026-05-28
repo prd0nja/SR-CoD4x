@@ -12,6 +12,10 @@
 	#define STDCALL __stdcall
 #endif
 
+#ifndef REGPARM2
+	#define REGPARM2 __attribute__((regparm(2)))
+#endif
+
 // clang-format off
 #ifndef IZ_C
 	#ifdef __cplusplus
@@ -37,6 +41,8 @@
 	#endif
 #endif
 // clang-format on
+
+#define BIT(n) (1U << (n))
 
 #define CHECK_PARAMS(count, message) \
 	if (Scr_GetNumParam() != count)  \
