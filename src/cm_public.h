@@ -19,8 +19,8 @@ typedef struct trace_s
 {
 	float fraction;
 	vec3_t normal;
-	int sflags;
-	int cflags;
+	int surfaceFlags;
+	int contents;
 	const char *material;
 	TraceHitType hitType;
 	uint16_t hitId;

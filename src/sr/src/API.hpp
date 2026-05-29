@@ -1,10 +1,10 @@
 #pragma once
 #include "Macros.hpp"
 
-#include <bg_public.h>
-#include <server.h>
-
 IZ_C_START
+
+struct pml_t;
+struct pmove_t;
 
 void SR_Initialize();
 void SR_Shutdown();
@@ -34,10 +34,10 @@ int SR_PmoveGetSpeed(playerState_t *ps);
 float SR_PmoveGetSpeedScale(playerState_t *ps);
 int SR_PmoveGetGravity(playerState_t *ps);
 float SR_PmoveGetJumpHeight(unsigned int num);
-void SR_JumpUpdateSurface(playerState_t *ps, pml_t *pml);
-int SR_PmoveWalkMove(pmove_t *pm, pml_t *pml);
-int SR_PmoveAirMove(pmove_t *pm, pml_t *pml);
-int SR_PmoveGroundTrace(pmove_t *pm, pml_t *pml);
-int SR_PmoveCrashLand(playerState_t *ps, pml_t *pml);
+void SR_JumpUpdateSurface(playerState_t *ps, struct pml_t *pml);
+int SR_PmoveWalkMove(struct pmove_t *pm, struct pml_t *pml);
+int SR_PmoveAirMove(struct pmove_t *pm, struct pml_t *pml);
+int SR_PmoveGroundTrace(struct pmove_t *pm, struct pml_t *pml);
+int SR_PmoveCrashLand(playerState_t *ps, struct pml_t *pml);
 
 IZ_C_END

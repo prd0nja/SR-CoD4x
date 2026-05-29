@@ -1,6 +1,8 @@
 #include "PMove.hpp"
-
 #include "Player.hpp"
+
+#include "Movements/CS.hpp"
+#include "Movements/Q3.hpp"
 
 namespace SR
 {
@@ -36,28 +38,86 @@ namespace SR
 		return Player->cl->jumpHeight;
 	}
 
+	MovementMode PMove::GetMovementMode()
+	{
+		switch (SV_GetClientStat(Player->ps->clientNum, 1700)) // sr_mode
+		{
+		case 1: // 190
+		case 2: // 210
+			return MovementMode::COD4;
+		case 3: // Q3
+			return MovementMode::Q3;
+		case 4: // Q3CPM
+		case 5: // Q3CPMW
+			return MovementMode::Q3CPM;
+		case 6: // CS
+		case 7: // Portal
+			return MovementMode::CS;
+		}
+		return MovementMode::COD4;
+	}
+
 	void PMove::JumpUpdateSurface(pml_t *pml)
 	{
-		Player->SurfaceFlags = pml->groundTrace.sflags;
+		Player->SurfaceFlags = pml->groundTrace.surfaceFlags;
 	}
 
-	int PMove::WalkMove(pmove_t *pm, pml_t *pml)
+	bool PMove::WalkMove(pmove_t *pm, pml_t *pml)
 	{
-		return 0;
+		switch (GetMovementMode())
+		{
+		case MovementMode::Q3:
+			Q3::WalkMove(reinterpret_cast<pmove_tt *>(pm), reinterpret_cast<pml_tt *>(pml));
+			return true;
+		case MovementMode::Q3CPM:
+			Q3::WalkMoveCPM(reinterpret_cast<pmove_tt *>(pm), reinterpret_cast<pml_tt *>(pml));
+			return true;
+		case MovementMode::CS:
+			CS::WalkMove(reinterpret_cast<pmove_tt *>(pm), reinterpret_cast<pml_tt *>(pml));
+			return true;
+		}
+		return false;
 	}
 
-	int PMove::AirMove(pmove_t *pm, pml_t *pml)
+	bool PMove::AirMove(pmove_t *pm, pml_t *pml)
 	{
-		return 0;
+		switch (GetMovementMode())
+		{
+		case MovementMode::Q3:
+			Q3::AirMove(reinterpret_cast<pmove_tt *>(pm), reinterpret_cast<pml_tt *>(pml));
+			return true;
+		case MovementMode::Q3CPM:
+			Q3::AirMoveCPM(reinterpret_cast<pmove_tt *>(pm), reinterpret_cast<pml_tt *>(pml));
+			return true;
+		case MovementMode::CS:
+			CS::AirMove(reinterpret_cast<pmove_tt *>(pm), reinterpret_cast<pml_tt *>(pml));
+			return true;
+		}
+		return false;
 	}
 
-	int PMove::GroundTrace(pmove_t *pm, pml_t *pml)
+	bool PMove::GroundTrace(pmove_t *pm, pml_t *pml)
 	{
-		return 0;
+		switch (GetMovementMode())
+		{
+		case MovementMode::Q3:
+		case MovementMode::Q3CPM:
+			Q3::GroundTrace(reinterpret_cast<pmove_tt *>(pm), reinterpret_cast<pml_tt *>(pml));
+			return true;
+		}
+		return false;
 	}
 
-	int PMove::CrashLand(playerState_s *ps, pml_t *pml)
+	bool PMove::CrashLand(playerState_s *ps, pml_t *pml)
 	{
-		return 0;
+		switch (GetMovementMode())
+		{
+		case MovementMode::Q3:
+		case MovementMode::Q3CPM:
+		case MovementMode::CS:
+			CoD4::CrashLand(reinterpret_cast<playerState_tt *>(ps), reinterpret_cast<pml_tt *>(pml), false);
+			return true;
+		}
+		return false;
 	}
 }

@@ -64,7 +64,7 @@ typedef struct DObj_s
 struct DObjTrace_s
 {
 	float fraction;
-	int sflags;
+	int surfaceFlags;
 	vec3_t normal;
 	uint16_t modelIndex;
 	uint16_t partName;

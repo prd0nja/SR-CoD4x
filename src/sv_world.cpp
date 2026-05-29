@@ -818,7 +818,7 @@ void __cdecl SV_PointTraceToEntity(struct pointtrace_t *clip, svEntity_t *check,
         assert(trace != NULL);
 
         trace->fraction = objTrace.fraction;
-        trace->sflags = objTrace.sflags;
+        trace->surfaceFlags = objTrace.surfaceFlags;
         trace->modelIndex = objTrace.modelIndex;
         trace->partName = objTrace.partName;
 //        trace->boneIndex = objTrace.localBoneIndex;
@@ -833,7 +833,7 @@ void __cdecl SV_PointTraceToEntity(struct pointtrace_t *clip, svEntity_t *check,
 
         trace->hitType = 1;
         trace->hitId = touch->s.number;
-        trace->cflags = touch->r.contents;
+        trace->contents = touch->r.contents;
         trace->material = NULL;
 /*
         if ( GetCurrentThreadId() == (_DWORD)g_DXDeviceThread && 0 == dword_A8402BC )
@@ -914,7 +914,7 @@ void __cdecl SV_PointTraceToEntity(struct pointtrace_t *clip, svEntity_t *check,
 
       trace->hitType = 1;
       trace->hitId = touch->s.number;
-      trace->cflags = touch->r.contents;
+      trace->contents = touch->r.contents;
       trace->material = NULL;
     }
 /*
@@ -1027,7 +1027,7 @@ void __cdecl SV_PointTraceToEntity(struct pointtrace_t *clip, svEntity_t *check,
         assert(trace != NULL);
 
         trace->fraction = objTrace.fraction;
-        trace->sflags = objTrace.sflags;
+        trace->surfaceFlags = objTrace.surfaceFlags;
         trace->modelIndex = objTrace.modelIndex;
         trace->partName = objTrace.partName;
         trace->partGroup = objTrace.partGroup;
@@ -1041,7 +1041,7 @@ void __cdecl SV_PointTraceToEntity(struct pointtrace_t *clip, svEntity_t *check,
 
         trace->hitType = 1;
         trace->hitId = touch->s.number;
-        trace->cflags = touch->r.contents;
+        trace->contents = touch->r.contents;
         trace->material = NULL;
       }
     }
@@ -1084,7 +1084,7 @@ void __cdecl SV_PointTraceToEntity(struct pointtrace_t *clip, svEntity_t *check,
 
       trace->hitType = 1;
       trace->hitId = touch->s.number;
-      trace->cflags = touch->r.contents;
+      trace->contents = touch->r.contents;
       trace->material = NULL;
     }
   }
@@ -1165,7 +1165,7 @@ void __cdecl SV_PointTraceToEntity(struct pointtrace_t *clip, svEntity_t *check,
 					trace->partGroup = 0;
 					trace->hitType = TRACE_HITTYPE_ENTITY;
 					trace->hitId = touch->s.number;
-					trace->cflags = touch->r.contents;
+					trace->contents = touch->r.contents;
 					trace->material = 0;
 				}
 			}
@@ -1222,7 +1222,7 @@ void __cdecl SV_PointTraceToEntity(struct pointtrace_t *clip, svEntity_t *check,
 			if ( trace->fraction >= objTrace.fraction )
 			{
 				  trace->fraction = objTrace.fraction;
-				  trace->sflags = objTrace.sflags;
+				  trace->surfaceFlags = objTrace.surfaceFlags;
 				  trace->modelIndex = objTrace.modelIndex;
 				  trace->partName = objTrace.partName;
 				  trace->partGroup = objTrace.partGroup;
@@ -1230,7 +1230,7 @@ void __cdecl SV_PointTraceToEntity(struct pointtrace_t *clip, svEntity_t *check,
 				  trace->walkable = trace->normal[2] > 0.69999999;
 				  trace->hitType = 1;
 				  trace->hitId = touch->s.number;
-				  trace->cflags = touch->r.contents;
+				  trace->contents = touch->r.contents;
 				  trace->material = 0;
 			}
 		  }
@@ -1268,7 +1268,7 @@ void __cdecl SV_PointTraceToEntity(struct pointtrace_t *clip, svEntity_t *check,
 		if (trace->fraction > (double)objTrace->fraction)
 		{
 			trace->fraction = objTrace->fraction;
-			trace->sflags = objTrace->sflags;
+			trace->surfaceFlags = objTrace->surfaceFlags;
 			trace->modelIndex = objTrace->modelIndex;
 			trace->partName = objTrace->partName;
 			trace->partGroup = objTrace->partGroup;
@@ -1276,7 +1276,7 @@ void __cdecl SV_PointTraceToEntity(struct pointtrace_t *clip, svEntity_t *check,
 					  trace->walkable = trace->normal[2] >= 0.69999999;
 					  trace->hitType = 1;
 					  trace->hitId = touch->s.number;
-					  trace->cflags = touch->r.contents;
+					  trace->contents = touch->r.contents;
 					  trace->material = 0;
 			*/
 		}
