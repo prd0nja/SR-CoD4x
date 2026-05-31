@@ -29,8 +29,15 @@ namespace SR
 		const float rightmove = pm->cmd.rightmove * scale;
 
 		pm->ps->sprintState.sprintButtonUpRequired = 1;
-		pml->forward[2] = 0.0f;
-		pml->right[2] = 0.0f;
+
+		// Project moves down to flat plane
+		pml->forward[2] = 0;
+		pml->right[2] = 0;
+
+		// Project the pml->forward and pml->right directions onto the ground plane
+		ClipVelocity(pml->forward, pml->groundTrace.normal, pml->forward, OVERCLIP);
+		ClipVelocity(pml->right, pml->groundTrace.normal, pml->right, OVERCLIP);
+
 		pml->forward = glm::normalize(pml->forward);
 		pml->right = glm::normalize(pml->right);
 
@@ -50,7 +57,7 @@ namespace SR
 			wishspeed = sv_maxspeed;
 		}
 		Accelerate(wishdir, wishspeed, pm->ps, pml);
-		StepSlideMove(pm, pml, true);
+		StepSlideMove(pm, pml, false);
 	}
 
 	void CS::AirMove(pmove_tt* pm, pml_tt* pml)
@@ -73,7 +80,8 @@ namespace SR
 		wishvel[2] = 0;
 		vec3 wishdir = wishvel;
 		float wishspeed = glm::length(wishdir);
-		wishdir = glm::normalize(wishdir);
+		if (wishspeed > 0.0f)
+			wishdir /= wishspeed;
 
 		if (wishspeed != 0 && (wishspeed > sv_maxspeed))
 		{
@@ -83,6 +91,92 @@ namespace SR
 		AirAccelerate(wishdir, wishspeed, pm->ps, pml);
 		StepSlideMove(pm, pml, true);
 		TryPlayerMove(pm, pml);
+	}
+
+	void CS::GroundTrace(pmove_tt* pm, pml_tt* pml)
+	{
+		vec3 point;
+		trace_tt trace = {};
+
+		point[0] = pm->ps->origin[0];
+		point[1] = pm->ps->origin[1];
+		point[2] = pm->ps->origin[2] - 0.25f;
+
+		PM_playerTrace(pm, &trace, pm->ps->origin, pm->mins, pm->maxs, point, pm->ps->clientNum, pm->tracemask);
+		pml->groundTrace = trace;
+
+		// Do something corrective if the trace starts in a solid...
+		if (trace.allsolid && !CoD4::CorrectAllSolid(pm, pml, &trace))
+			return;
+
+		// If the trace didn't hit anything, we are in free fall
+		if (trace.fraction == 1.0f)
+		{
+			CoD4::GroundTraceMissed(pm, pml);
+			pml->groundPlane = false;
+			pml->almostGroundPlane = false;
+			pml->walking = false;
+			return;
+		}
+		// Check if getting thrown off the ground
+		if (pm->ps->velocity[2] > 0.0f && glm::dot(pm->ps->velocity, trace.normal) > 10.0f)
+		{
+			// Go into jump animation
+			if (pm->cmd.forwardmove >= 0)
+				pm->ps->pm_flags &= ~PMF_BACKWARDS_RUN;
+			else
+				pm->ps->pm_flags |= PMF_BACKWARDS_RUN;
+
+			pm->ps->groundEntityNum = ENTITYNUM_NONE;
+			pml->groundPlane = false;
+			pml->almostGroundPlane = false;
+			pml->walking = false;
+			return;
+		}
+		// Slopes that are too steep will not be considered onground
+		if (trace.normal[2] < SURF_SLOPE_NORMAL)
+		{
+			pm->ps->groundEntityNum = ENTITYNUM_NONE;
+			pml->groundPlane = false;
+			pml->almostGroundPlane = false;
+			pml->walking = false;
+			CoD4::JumpClearState(pm->ps);
+			return;
+		}
+		pml->groundPlane = true;
+		pml->almostGroundPlane = true;
+		pml->walking = true;
+
+		if (pm->ps->groundEntityNum == ENTITYNUM_NONE)
+		{
+			vec3 velocity = pm->ps->velocity;
+			bool hadHardLanding = pm->ps->pm_flags & PMF_TIME_HARDLANDING;
+
+			CoD4::CrashLand(pm->ps, pml);
+
+			// Clear jump
+			CoD4::JumpClearState(pm->ps);
+			pm->ps->pm_time = 0;
+
+			// Undo slowdowns
+			pm->ps->velocity = velocity;
+			if (!hadHardLanding && (pm->ps->pm_flags & PMF_TIME_HARDLANDING))
+				pm->ps->pm_flags &= ~PMF_TIME_HARDLANDING;
+		}
+		switch (trace.hitType)
+		{
+		case TRACE_HITTYPE_ENTITY:
+			pm->ps->groundEntityNum = trace.hitId;
+			break;
+		case TRACE_HITTYPE_DYNENT_MODEL:
+		case TRACE_HITTYPE_DYNENT_BRUSH:
+			pm->ps->groundEntityNum = 1022;
+			break;
+		default:
+			pm->ps->groundEntityNum = 1023;
+		}
+
+		PM_AddTouchEnt(pm, pm->ps->groundEntityNum);
 	}
 
 	bool CS::JumpCheck(pmove_tt* pm, pml_tt* pml)
@@ -197,10 +291,14 @@ namespace SR
 			return;
 
 		// CoD4 bounce
-		if (!trace.walkable && trace.normal[2] >= 0.30000001f && (pm->ps->pm_flags & PMF_JUMPING)
-			&& pm->ps->jumpOriginZ > pm->ps->origin[2])
+		if (!trace.walkable && trace.normal[2] >= 0.30000001f && (ps->pm_flags & PMF_JUMPING)
+			&& ps->jumpOriginZ > ps->origin[2])
+		{
+			ps->velocity[2] *= 0.9f;
+			CoD4::ProjectVelocity(ps->velocity, trace.normal, ps->velocity);
+			CoD4::JumpClearState(ps);
 			return;
-
+		}
 		ClipVelocity(ps->velocity, trace.normal, ps->velocity, OVERCLIP);
 	}
 
@@ -274,10 +372,12 @@ namespace SR
 			numplanes = 0;
 
 		// Never turn against original velocity
-		planes[numplanes] = pm->ps->velocity;
-		planes[numplanes] = glm::normalize(planes[numplanes]);
-		numplanes++;
-
+		float velLen = glm::length(pm->ps->velocity);
+		if (velLen > 0.0f)
+		{
+			planes[numplanes] = pm->ps->velocity / velLen;
+			numplanes++;
+		}
 		for (bumpcount = 0; bumpcount < NUM_BUMPS; bumpcount++)
 		{
 			// Calculate position we are trying to move to
@@ -350,7 +450,13 @@ namespace SR
 						if (glm::dot(clip_velocity, planes[permutation[0]]) < 0.0f)
 						{
 							dir = glm::cross(planes[permutation[0]], planes[permutation[j]]);
-							dir = glm::normalize(dir);
+							float dirLen = glm::length(dir);
+							if (dirLen < 0.001f)
+							{
+								pm->ps->velocity = { 0, 0, 0 };
+								return true;
+							}
+							dir /= dirLen;
 							float d = glm::dot(dir, pm->ps->velocity);
 							clip_velocity = dir * d;
 							d = glm::dot(dir, end_velocity);
@@ -379,83 +485,63 @@ namespace SR
 
 	void CS::StepSlideMove(pmove_tt* pm, pml_tt* pml, bool gravity)
 	{
-		trace_tt trace = {};
-		vec3 start_o, start_v, endpos;
-		vec3 down_o, down_v;
-		vec3 up, down;
+		vec3 vecPos = pm->ps->origin;
+		vec3 vecVel = pm->ps->velocity;
 
-		if (pm->ps->pm_flags & PMF_LADDER)
-		{
-			trace.allsolid = false;
-			CoD4::JumpClearState(pm->ps);
-		}
-		else if (pml->groundPlane)
-			trace.allsolid = true;
-		else
-		{
-			trace.allsolid = false;
-			if (pm->ps->pm_flags & PMF_JUMPING && pm->ps->pm_time)
-				CoD4::JumpClearState(pm->ps);
-		}
-		start_o = pm->ps->origin;
-		start_v = pm->ps->velocity;
-
-		// We got exactly where we wanted to go first try
-		if (!SlideMove(pm, pml, gravity))
-			return;
-
-		down = start_o;
-		down[2] -= sv_stepsize;
-
-		PM_playerTrace(pm, &trace, start_o, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask);
-		up = { 0, 0, 1 };
-
-		// Never step up when you still have up velocity
-		if (pm->ps->velocity[2] > 0.0f && (trace.fraction == 1.0f || glm::dot(trace.normal, up) < 0.7f))
-			return;
-
-		down_o = pm->ps->origin;
-		down_v = pm->ps->velocity;
-		up = start_o;
-		up[2] += sv_stepsize;
-
-		// Test the player position if they were a stepheight higher
-		PM_playerTrace(pm, &trace, start_o, pm->mins, pm->maxs, up, pm->ps->clientNum, pm->tracemask);
-		endpos = glm::mix(pm->ps->origin, up, trace.fraction);
-
-		// Can't step up
-		if (trace.allsolid)
-			return;
-		float stepSize = endpos[2] - start_o[2];
-
-		// Try slidemove from this position
-		pm->ps->origin = endpos;
-		pm->ps->velocity = start_v;
-
+		// Slide move down first
 		SlideMove(pm, pml, gravity);
 
-		// Push down the final amount
-		down = pm->ps->origin;
-		down[2] -= stepSize;
+		// Save down results
+		vec3 vecDownPos = pm->ps->origin;
+		vec3 vecDownVel = pm->ps->velocity;
 
-		PM_playerTrace(pm, &trace, pm->ps->origin, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask);
-		endpos = glm::mix(pm->ps->origin, down, trace.fraction);
+		// Reset to original
+		pm->ps->origin = vecPos;
+		pm->ps->velocity = vecVel;
 
+		// Move up a step height
+		vec3 vecEndPos = vecPos;
+		vecEndPos[2] += sv_stepsize;
+
+		trace_tt trace = {};
+		PM_playerTrace(pm, &trace, vecPos, pm->mins, pm->maxs, vecEndPos, pm->ps->clientNum, pm->tracemask);
+		if (!trace.startsolid && !trace.allsolid)
+			pm->ps->origin = glm::mix(vecPos, vecEndPos, trace.fraction);
+
+		// Slide move up
+		SlideMove(pm, pml, false);
+
+		// Push down
+		vecEndPos = pm->ps->origin;
+		vecEndPos[2] -= sv_stepsize;
+
+		PM_playerTrace(pm, &trace, pm->ps->origin, pm->mins, pm->maxs, vecEndPos, pm->ps->clientNum, pm->tracemask);
 		if (!trace.allsolid)
-			pm->ps->origin = endpos;
-
-		if (trace.fraction < 1.0f)
 		{
-			// CoD4 bounce
-			if (!trace.walkable && trace.normal[2] >= 0.30000001f && (pm->ps->pm_flags & PMF_JUMPING)
-				&& pm->ps->jumpOriginZ > pm->ps->origin[2])
-			{
-				pm->ps->velocity[2] *= 0.9f; // Tweak bounce velocity
-				CoD4::ProjectVelocity(pm->ps->velocity, trace.normal, pm->ps->velocity);
-				CoD4::JumpClearState(pm->ps); // Prevent double bounce
-				return;
-			}
-			ClipVelocity(pm->ps->velocity, trace.normal, pm->ps->velocity, OVERCLIP);
+			if (trace.fraction < 1.0f)
+				pm->ps->origin = glm::mix(pm->ps->origin, vecEndPos, trace.fraction);
+		}
+		// Save up results
+		vec3 vecUpPos = pm->ps->origin;
+		vec3 vecUpVel = pm->ps->velocity;
+
+		// Pick the move that went farther horizontally
+		float downDist = (vecDownPos[0] - vecPos[0]) * (vecDownPos[0] - vecPos[0])
+			+ (vecDownPos[1] - vecPos[1]) * (vecDownPos[1] - vecPos[1]);
+		float upDist = (vecUpPos[0] - vecPos[0]) * (vecUpPos[0] - vecPos[0])
+			+ (vecUpPos[1] - vecPos[1]) * (vecUpPos[1] - vecPos[1]);
+
+		if (downDist > upDist || trace.normal[2] < SURF_SLOPE_NORMAL)
+		{
+			pm->ps->origin = vecDownPos;
+			pm->ps->velocity = vecDownVel;
+		}
+		else
+		{
+			pm->ps->origin = vecUpPos;
+			pm->ps->velocity[0] = vecUpVel[0];
+			pm->ps->velocity[1] = vecUpVel[1];
+			pm->ps->velocity[2] = vecDownVel[2];
 		}
 	}
 }

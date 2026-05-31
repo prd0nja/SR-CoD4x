@@ -155,7 +155,7 @@ namespace SR
 		pml->walking = 0;
 	}
 
-	void CoD4::CrashLand(playerState_tt *ps, pml_tt *pml, bool hardlanding)
+	void CoD4::CrashLand(playerState_tt *ps, pml_tt *pml)
 	{
 		float vel = pml->previous_velocity[2];
 		float gravity = (float)ps->gravity;
@@ -278,21 +278,18 @@ namespace SR
 				if (fallHeight >= 12.0f)
 				{
 					// Hard landing
-					if (hardlanding)
+					ps->velocity[0] = ps->velocity[0] * 0.6700000166893005;
+					ps->velocity[1] = ps->velocity[1] * 0.6700000166893005;
+					ps->velocity[2] = 0.6700000166893005 * ps->velocity[2];
+					if ((surfaceFlags & SURF_NOSTEPS) == 0)
 					{
-						ps->velocity[0] = ps->velocity[0] * 0.6700000166893005;
-						ps->velocity[1] = ps->velocity[1] * 0.6700000166893005;
-						ps->velocity[2] = 0.6700000166893005 * ps->velocity[2];
-						if ((surfaceFlags & SURF_NOSTEPS) == 0)
+						int v21 = (surfaceFlags >> 20) & 0x1F;
+						if (v21)
 						{
-							int v21 = (surfaceFlags >> 20) & 0x1F;
-							if (v21)
+							int v22 = v21 + EV_LANDING_FIRST;
+							if (v22)
 							{
-								int v22 = v21 + EV_LANDING_FIRST;
-								if (v22)
-								{
-									BG_AddPredictableEventToPlayerstate(v22, viewDip, ps);
-								}
+								BG_AddPredictableEventToPlayerstate(v22, viewDip, ps);
 							}
 						}
 					}

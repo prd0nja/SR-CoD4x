@@ -9,6 +9,7 @@ namespace SR
 	public:
 		static void WalkMove(pmove_tt* pm, pml_tt* pml);
 		static void AirMove(pmove_tt* pm, pml_tt* pml);
+		static void GroundTrace(pmove_tt* pm, pml_tt* pml);
 		static bool JumpCheck(pmove_tt* pm, pml_tt* pml);
 		static void Friction(pmove_tt* pm, pml_tt* pml);
 		static void Accelerate(const vec3& wishdir, float wishspeed, playerState_tt* ps, pml_tt* pml);

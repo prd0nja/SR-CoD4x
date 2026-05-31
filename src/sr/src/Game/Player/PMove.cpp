@@ -104,20 +104,15 @@ namespace SR
 		case MovementMode::Q3CPM:
 			Q3::GroundTrace(reinterpret_cast<pmove_tt *>(pm), reinterpret_cast<pml_tt *>(pml));
 			return true;
+		case MovementMode::CS:
+			CS::GroundTrace(reinterpret_cast<pmove_tt *>(pm), reinterpret_cast<pml_tt *>(pml));
+			return true;
 		}
 		return false;
 	}
 
 	bool PMove::CrashLand(playerState_s *ps, pml_t *pml)
 	{
-		switch (GetMovementMode())
-		{
-		case MovementMode::Q3:
-		case MovementMode::Q3CPM:
-		case MovementMode::CS:
-			CoD4::CrashLand(reinterpret_cast<playerState_tt *>(ps), reinterpret_cast<pml_tt *>(pml), false);
-			return true;
-		}
 		return false;
 	}
 }
