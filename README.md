@@ -6,9 +6,8 @@ CoD4x is a modification of the Call of Duty 4 - Modern Warfare server. It fixes 
 * gsclib standard library
 * Extended player movements
 * Increased assets pool
-* Record demos
+* Demo recording and playback
 * FPS calculation
-* Demo player
 * Netcode optimization
 * Voice chat proximity feature
 * Radio MP3 & WAV streaming
