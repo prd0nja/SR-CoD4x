@@ -1,25 +1,25 @@
 # SR CoD4x
 
-CoD4x is a modification of the Call of Duty 4 - Modern Warfare server. It fixes several bugs in the original binaries and allows developers to extend server functionality with additional variables and plugins. When using the CoD4x server, the clients invoke installation of the proprietary CoD4x client to players joining the server using the CoD4x servers, which fixes several known base game bugs in the client, and in combination with the server allows for extra features.
+A modification of the Call of Duty 4: Modern Warfare server. CoD4x fixes several bugs in the original binaries and lets developers extend server functionality with extra variables and plugins. When a player joins a CoD4x server, their client is automatically updated to the CoD4x client, which fixes known base-game client bugs and, together with the server, unlocks extra features.
 
-# SR Features
-* gsclib standard library
-* Extended player movements
+## Features
+
+* Administration commands
+* Plugin system
+* Measures against hackers
+* Reliable player identification
+* Pbss-like screenshot feature
+* Automated client updates, no manual installation needed
+* Backwards compatibility with 1.7 and 1.7a servers
+* A new masterserver for when the official one is down
+* gsclib standard library for the GSC scripting language
+* Extended player movements including: 190, 210, Q3, Q3CPM, CS
 * Increased assets pool
 * Demo recording and playback
-* FPS calculation
+* Player FPS calculation
 * Netcode optimization
-* Voice chat proximity feature
-* Radio MP3 & WAV streaming
-
-## CoD4x Features
-* Administration commands
-* Measurements against hackers
-* Reliable player identification
-* Pbss like screenshot feature
-* Automated client update, no manual installation needed
-* Backwards compatibility to 1.7 and 1.7a servers
-* A new [masterserver](http://cod4master.cod4x.ovh/), for when the official masterserver is down
+* Voice chat proximity
+* Sound assets streaming over voice protocol
 
 ## Setting up a server
 You also require the base game to run a server. Copy every .iwd file in `client/main` to `server/main`.
