@@ -24,5 +24,5 @@ cmake --build plugins\gsclib\build
 
 :: Install
 echo [+] Install
-copy /v bin\cod4x18_dedrun.exe "C:\Dev\CoD4\SDK"
-copy /v bin\gsclib.dll "C:\Dev\CoD4\SDK\plugins"
+copy /v bin\cod4x18_dedrun.exe "D:\Dev\CoD4\SDK"
+copy /v bin\gsclib.dll "D:\Dev\CoD4\SDK\plugins"
